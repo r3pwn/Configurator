@@ -1,13 +1,185 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="fill_parent"
-    android:layout_height="fill_parent"
-    android:gravity="center"
-    android:orientation="vertical" >
+<ScrollView
+	xmlns:android="http://schemas.android.com/apk/res/android"
+	android:layout_height="wrap_content"
+	android:layout_width="wrap_content">
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/hello" />
+	<RelativeLayout
+		android:layout_height="fill_parent"
+		android:layout_width="fill_parent">
 
-</LinearLayout>
+		<TextView
+			android:layout_height="wrap_content"
+			android:text="Configurator"
+			android:textAppearance="?android:attr/textAppearanceLarge"
+			android:layout_width="wrap_content"
+			android:id="@+id/mainTextView1"
+			android:layout_centerHorizontal="true"/>
+
+		<View
+			android:layout_height="1dp"
+			android:background="?android:attr/dividerVertical"
+			android:layout_width="match_parent"
+			android:layout_below="@id/mainTextView1"
+			android:id="@+id/mainView1"/>
+
+		<TextView
+			android:layout_height="wrap_content"
+			android:text="Flag:"
+			android:layout_width="wrap_content"
+			android:layout_below="@id/mainView1"
+			android:id="@+id/mainTextView2"/>
+
+		<EditText
+			android:layout_height="wrap_content"
+			android:inputType="textEmailSubject"
+			android:ems="10"
+			android:layout_width="fill_parent"
+			android:layout_below="@id/mainTextView2"
+			android:id="@+id/flagNameET"/>
+
+		<TextView
+			android:layout_height="wrap_content"
+			android:text="Value:"
+			android:layout_width="wrap_content"
+			android:layout_below="@id/flagNameET"
+			android:id="@+id/mainTextView3"/>
+
+		<EditText
+			android:layout_height="wrap_content"
+			android:inputType="textEmailSubject"
+			android:ems="10"
+			android:layout_width="fill_parent"
+			android:layout_below="@id/mainTextView3"
+			android:id="@+id/flagValueET"/>
+
+		<Button
+			android:layout_height="wrap_content"
+			android:text="Configure"
+			android:layout_width="wrap_content"
+			android:layout_below="@id/flagValueET"
+			android:layout_centerHorizontal="true"
+			android:id="@+id/mainButton1"/>
+
+		<TextView
+			android:layout_height="wrap_content"
+			android:text="(Optional) Kill processes:"
+			android:layout_width="wrap_content"
+			android:layout_below="@id/mainButton1"
+			android:id="@+id/mainTextView4"/>
+
+		<EditText
+			android:layout_height="wrap_content"
+			android:inputType="textEmailSubject"
+			android:ems="10"
+			android:layout_width="fill_parent"
+			android:layout_below="@id/mainTextView4"
+			android:id="@+id/processKillET"/>
+
+		<Button
+			android:layout_height="wrap_content"
+			android:text="Kill"
+			android:layout_width="wrap_content"
+			android:layout_below="@id/processKillET"
+			android:layout_centerHorizontal="true"
+			android:id="@+id/mainButton2"/>
+
+		<!--<Button
+			android:layout_height="wrap_content"
+			android:text="Button"
+			android:layout_width="wrap_content"
+			android:layout_below="@id/mainButton2"
+			android:alpha="0.0"
+			android:id="@+id/mainButton3"/>-->
+
+		<!--<Button
+			android:layout_height="wrap_content"
+			android:text="Button"
+			android:layout_width="wrap_content"
+			android:layout_below="@id/mainButton3"
+			android:alpha="0"
+			android:id="@+id/mainButton4"/>-->
+
+		<!--<Button
+			android:layout_height="wrap_content"
+			android:text="Button"
+			android:layout_width="wrap_content"
+			android:layout_below="@id/mainButton4"
+			android:alpha="0.0"
+			android:id="@+id/mainButton5"/> -->
+
+		<!--<TextView
+			android:layout_height="wrap_content"
+			android:text="Configuration Flags:"
+			android:layout_width="wrap_content"
+			android:layout_below="@id/mainButton5"
+			android:layout_centerHorizontal="true"
+			android:id="@+id/mainTextView5"/>-->
+
+			<!-- <TextView
+			android:layout_height="wrap_content"
+			android:layout_width="wrap_content"
+			android:layout_below="@id/mainTextView5"
+			android:id="@+id/playMusicFlags"
+			android:text="Google Play Music\n
+			music_download_passthrough_cookies\n
+			music_supported_audio\n
+			music_chunk_size_bites\n
+music_throttle_download\n
+music_throttle_download_kbps\n
+music_throttle_download_kb\n
+music_enable_storage_migrations\n
+music_short_term_cache_min_free_space\n
+music_long_term_cache_min_free_space\n
+music_download_max_blacklist_size\n
+music_download_blacklist_ttl_sec\n
+music_local_http_stuffing\n
+music_shop_url\n
+music_enable_tracks_upsync_deletion\n
+music_action_bar_height\n
+music_notification_bar_height\n
+music_device_enable_active_check\n
+music_device_type\n
+music_smartphone_min_screen_size_in_tenth_of_inch\n
+music_smartphone_max_screen_size_in_tenth_of_inch\n
+music_use_star_ratings\n
+music_overdraw_listview\n
+music_using_new_download_ui\n
+music_temp_nautilus_status_exp_time_in_seconds\n
+music_enable_sync_notifications\n
+music_enable_autocache\n
+music_autocache_opt_in_default_nautilus\n
+music_autocache_opt_in_default\n
+music_enable_find_video\n
+music_enable_cast_remote_playback\n
+music_nautilus_offline_status_ttl_days\n
+music_show_radio_animation\n
+music_min_version_upgrade_sync\n
+music_downstream_page_size\n
+music_upstream_page_size\n
+music_sync_radio\n
+music_sync_config\n
+music_merge_block_size\n
+music_enable_track_stats_upsync\n
+music_periodic_sync_frequency_in_seconds\n
+music_max_ephemeral_top_size\n
+music_sync_invalid_account\n
+music_use_downstream_posts\n
+music_sync_server_options\n
+music_enable_playlist_radio\n
+music_enable_keepon_radio\n
+music_enable_secondary_sdcards\n
+music_debug_logs_enabled\n
+music_enable_shared_playlists\n
+music_gapless_enabled\n
+music_gapless_enabled_pinned\n
+music_enable_chromecast_wake_lock\n
+music_cast_app_name\n
+music_version_key\n
+music_keepon_radio_always_use_downloaded_songs\n"/>
+-->
+
+	</RelativeLayout>
+
+</ScrollView>
+
