@@ -151,8 +151,15 @@ public class MainActivity extends Activity
 								String flagValue = value.getText().toString();
 								java.lang.Process su = Runtime.getRuntime().exec("su");
 								DataOutputStream outputStream = new DataOutputStream(su.getOutputStream());
-								outputStream.writeBytes("/data/data/com.r3pwn.configurator/lib/libhackyworkaround.so /data/data/com.google.android.gsf/databases/gservices.db \"INSERT INTO overrides (name, value) VALUES ('" + flagName + "', '" + flagValue + "');\"\n");
-								outputStream.writeBytes("/data/data/com.r3pwn.configurator/lib/libhackyworkaround.so /data/data/com.google.android.gsf/databases/gservices.db \"UPDATE overrides SET value='" + flagValue + "' WHERE name='" + flagName + "';\"\n");
+                                File mysqlfile = new File("/system/xbin/sqlite3");
+                                File mysqlfile2 = new File("/system/bin/sqlite3");
+                                if(mysqlfile.exists() || mysqlfile2.exists()) {
+                                    outputStream.writeBytes("sqlite3 /data/data/com.google.android.gsf/databases/gservices.db \"INSERT INTO overrides (name, value) VALUES ('" + flagName + "', '" + flagValue + "');\"\n");
+                                    outputStream.writeBytes("sqlite3 /data/data/com.google.android.gsf/databases/gservices.db \"UPDATE overrides SET value='" + flagValue + "' WHERE name='" + flagName + "';\"\n");
+                                } else {
+                                    outputStream.writeBytes("/data/data/com.r3pwn.configurator/lib/libhackyworkaround.so /data/data/com.google.android.gsf/databases/gservices.db \"INSERT INTO overrides (name, value) VALUES ('" + flagName + "', '" + flagValue + "');\"\n");
+                                    outputStream.writeBytes("/data/data/com.r3pwn.configurator/lib/libhackyworkaround.so /data/data/com.google.android.gsf/databases/gservices.db \"UPDATE overrides SET value='" + flagValue + "' WHERE name='" + flagName + "';\"\n");
+                                }
 								outputStream.writeBytes("exit\n");
 								outputStream.flush();
 								su.waitFor();
