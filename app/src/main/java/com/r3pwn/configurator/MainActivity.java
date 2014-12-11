@@ -109,6 +109,11 @@ public class MainActivity extends Activity
 				}
 			});
 			sualertDialog.show();
+			configure.setEnabled(false);
+			killbutton.setEnabled(false);
+			name.setEnabled(false);
+			value.setEnabled(false);
+			killet.setEnabled(false);
 		}
 		configure.setOnClickListener(new View.OnClickListener() 
 		{
@@ -125,6 +130,7 @@ public class MainActivity extends Activity
 						db.execSQL("INSERT INTO overrides (name, value) VALUES ('" + flagName + "', '" + flagValue + "');");
 						db.execSQL("UPDATE overrides SET value='" + flagValue + "' WHERE name='" + flagName + "';");
 						Shell.SU.run("cp /data/data/com.r3pwn.configurator/databases/gservices.db /data/data/com.google.android.gsf/databases/gservices.db\n");
+						Toast.makeText(getApplicationContext(), "Done. Please reboot.", Toast.LENGTH_LONG).show();
 					}
 					catch(android.database.SQLException sqle)
 					{
@@ -134,6 +140,7 @@ public class MainActivity extends Activity
 						SQLiteDatabase db=openOrCreateDatabase("gservices.db", Context.MODE_WORLD_READABLE, null);
 						db.execSQL("UPDATE overrides SET value='" + flagValue + "' WHERE name='" + flagName + "';");
 						Shell.SU.run("cp /data/data/com.r3pwn.configurator/databases/gservices.db /data/data/com.google.android.gsf/databases/gservices.db\n");
+						Toast.makeText(getApplicationContext(), "Done. Please reboot.", Toast.LENGTH_LONG).show();
 					}
 				}
 				if (name.getText().toString().matches(""))
