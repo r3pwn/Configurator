@@ -9,6 +9,10 @@ import android.content.*;
 import android.preference.*;
 import android.net.*;
 import android.animation.*;
+import android.database.sqlite.*;
+import eu.chainfire.libsuperuser.*;
+import java.sql.*;
+
 
 public class MainActivity extends Activity
 {
@@ -84,108 +88,66 @@ public class MainActivity extends Activity
 		*/
 		final SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
 
-		final int unsupported_shown = preferences.getInt("unsupported_shown", 0);
+		final boolean nevertellme = preferences.getBoolean("nevertellme", false);
         final SharedPreferences.Editor prefs_edit = preferences.edit();
 		final Button configure = (Button)findViewById(R.id.mainButton1);
 		final EditText name = (EditText)findViewById(R.id.flagNameET);
 		final EditText value = (EditText)findViewById(R.id.flagValueET);
 		final Button killbutton = (Button)findViewById(R.id.mainButton2);
 		final EditText killet = (EditText)findViewById(R.id.processKillET);
-		
-		if( Build.VERSION.SDK_INT >= 20)
-		{
-			if( unsupported_shown == 0)
-			{
-				final AlertDialog unsupported_version = new AlertDialog.Builder(MainActivity.this).create();
-				unsupported_version.setTitle("Unsupported Android Version");
-				unsupported_version.setMessage("The version of android you are running is not fully supported by this app. You will need to reboot after a configuration change.");
-				prefs_edit.putInt("unsupported_shown", 1);
-				prefs_edit.commit();
-				unsupported_version.setButton("Okay", new DialogInterface.OnClickListener() 
-				{
-						public void onClick(DialogInterface dialog2, int which2) {
-							unsupported_version.dismiss();
-						}
-					});
-				unsupported_version.show();
-				}
-			}
 	
-		File subin = new File("/system/bin/su");
-		if(subin.exists()) 
+		if (!Shell.SU.available())
 		{
-			// Nothing
-		}
-		else
-		{
-			File suxbin = new File("/system/xbin/su");
-			if(suxbin.exists())
+			final AlertDialog sualertDialog = new AlertDialog.Builder(MainActivity.this).create();
+			sualertDialog.setTitle("You aren't rooted");
+			sualertDialog.setMessage("It looks like you aren't rooted. Most features will not work. There is nothing I can do to help you.");
+			sualertDialog.setButton("Alright, thanks anyways.", new DialogInterface.OnClickListener() 
 			{
-				// Nothing
-			}
-			else
-			{
-				final AlertDialog sualertDialog = new AlertDialog.Builder(MainActivity.this).create();
-				sualertDialog.setTitle("You aren't rooted");
-				sualertDialog.setMessage("It looks like you aren't rooted. Most features will not work. There is nothing I can do to help you.");
-
-				sualertDialog.setButton("Alright, thanks anyways.", new DialogInterface.OnClickListener() 
+				public void onClick(DialogInterface dialog, int which) 
 				{
-						public void onClick(DialogInterface dialog, int which) 
-						{
-							sualertDialog.dismiss();
-						}
-					});
-					sualertDialog.show();
+					sualertDialog.dismiss();
 				}
-			}
+			});
+			sualertDialog.show();
+		}
 		configure.setOnClickListener(new View.OnClickListener() 
+		{
+			public void onClick(View v) 
 			{
-				public void onClick(View v) 
+				if (!value.getText().toString().matches("") || name.getText().toString().matches(""))
 				{
-					if (!value.getText().toString().matches("") || name.getText().toString().matches(""))
+					try 
 					{
-							try 
-							{
-								String flagName = name.getText().toString();
-								String flagValue = value.getText().toString();
-								java.lang.Process su = Runtime.getRuntime().exec("su");
-								DataOutputStream outputStream = new DataOutputStream(su.getOutputStream());
-                                File mysqlfile = new File("/system/xbin/sqlite3");
-                                File mysqlfile2 = new File("/system/bin/sqlite3");
-                                if(mysqlfile.exists() || mysqlfile2.exists()) {
-                                    outputStream.writeBytes("sqlite3 /data/data/com.google.android.gsf/databases/gservices.db \"INSERT INTO overrides (name, value) VALUES ('" + flagName + "', '" + flagValue + "');\"\n");
-                                    outputStream.writeBytes("sqlite3 /data/data/com.google.android.gsf/databases/gservices.db \"UPDATE overrides SET value='" + flagValue + "' WHERE name='" + flagName + "';\"\n");
-                                } else {
-                                    outputStream.writeBytes("/data/data/com.r3pwn.configurator/lib/libhackyworkaround.so /data/data/com.google.android.gsf/databases/gservices.db \"INSERT INTO overrides (name, value) VALUES ('" + flagName + "', '" + flagValue + "');\"\n");
-                                    outputStream.writeBytes("/data/data/com.r3pwn.configurator/lib/libhackyworkaround.so /data/data/com.google.android.gsf/databases/gservices.db \"UPDATE overrides SET value='" + flagValue + "' WHERE name='" + flagName + "';\"\n");
-                                }
-								outputStream.writeBytes("exit\n");
-								outputStream.flush();
-								su.waitFor();
-
-							}
-							catch(IOException e)
-							{
-								// We do this to keep the compiler happy.
-							}
-							catch (InterruptedException e)
-							{
-								// We do this to keep the compiler happy
-							}
-						}
-					if (name.getText().toString().matches(""))
+						String flagName = name.getText().toString();
+						String flagValue = value.getText().toString();
+						Shell.SU.run("cp /data/data/com.google.android.gsf/databases/gservices.db /data/data/com.r3pwn.configurator/databases/gservices.db\n");
+						SQLiteDatabase db=openOrCreateDatabase("gservices.db", Context.MODE_WORLD_READABLE, null);
+						db.execSQL("INSERT INTO overrides (name, value) VALUES ('" + flagName + "', '" + flagValue + "');");
+						db.execSQL("UPDATE overrides SET value='" + flagValue + "' WHERE name='" + flagName + "';");
+						Shell.SU.run("cp /data/data/com.r3pwn.configurator/databases/gservices.db /data/data/com.google.android.gsf/databases/gservices.db\n");
+					}
+					catch(android.database.SQLException sqle)
 					{
-						final AlertDialog sualertDialog = new AlertDialog.Builder(MainActivity.this).create();
-						sualertDialog.setTitle("You need to enter a flag name");
-						sualertDialog.setMessage("You forgot to enter a flag name, go ahead and to that before proceeding.");
-						sualertDialog.setButton("Oh, oops.", new DialogInterface.OnClickListener() 
-						{
-								public void onClick(DialogInterface dialog, int which) 
-								{
-									sualertDialog.dismiss();
-								}
-							});
+						String flagName = name.getText().toString();
+						String flagValue = value.getText().toString();
+						Shell.SU.run("cp /data/data/com.google.android.gsf/databases/gservices.db /data/data/com.r3pwn.configurator/databases/gservices.db\n");
+						SQLiteDatabase db=openOrCreateDatabase("gservices.db", Context.MODE_WORLD_READABLE, null);
+						db.execSQL("UPDATE overrides SET value='" + flagValue + "' WHERE name='" + flagName + "';");
+						Shell.SU.run("cp /data/data/com.r3pwn.configurator/databases/gservices.db /data/data/com.google.android.gsf/databases/gservices.db\n");
+					}
+				}
+				if (name.getText().toString().matches(""))
+				{
+					final AlertDialog sualertDialog = new AlertDialog.Builder(MainActivity.this).create();
+					sualertDialog.setTitle("You need to enter a flag name");
+					sualertDialog.setMessage("You forgot to enter a flag name, go ahead and to that before proceeding.");
+					sualertDialog.setButton("Oh, oops.", new DialogInterface.OnClickListener() 
+					{
+							public void onClick(DialogInterface dialog, int which) 
+							{
+								sualertDialog.dismiss();
+							}
+						});
 						sualertDialog.show();
 					}
 					if (value.getText().toString().matches(""))
@@ -234,7 +196,29 @@ public class MainActivity extends Activity
 							outputStream.writeBytes("exit\n");
 							outputStream.flush();
 							su.waitFor();
-
+							if (Build.VERSION.SDK_INT >= 21)
+							{
+								final AlertDialog sualertDialog = new AlertDialog.Builder(MainActivity.this).create();
+								sualertDialog.setTitle("You are running Lollipop or higher");
+								sualertDialog.setMessage("This feature may not work. Go check. If it didn't work, then a reboot may be required before changes take effect.");
+								sualertDialog.setButton("Oh, okay.", new DialogInterface.OnClickListener() {
+										public void onClick(DialogInterface dialog, int which) 
+										{
+											sualertDialog.dismiss();
+										}
+									});
+								if (nevertellme == false)
+								{
+									sualertDialog.setButton2("Never tell me this again.", new DialogInterface.OnClickListener() {
+										public void onClick(DialogInterface dialog, int which) 
+										{
+											prefs_edit.putBoolean("nevertelleme", true);
+											prefs_edit.commit();
+										}
+									});
+									sualertDialog.show();
+								}
+							}
 						}
 						catch(IOException e)
 						{
