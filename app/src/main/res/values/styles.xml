@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<resources>
+<!-- Inherit from the light Material Theme -->
+<style name="ConfiguratorTheme" parent="android:Theme.Holo.Light">
+<!-- Customizations go here -->
+</style>
+</resources>

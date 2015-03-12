@@ -26,7 +26,11 @@ public class MainActivity extends Activity
 		final EditText value = (EditText)findViewById(R.id.flagValueET);
 		final Button killbutton = (Button)findViewById(R.id.mainButton2);
 		final EditText killet = (EditText)findViewById(R.id.processKillET);
-	
+		final ActionBar ab = getActionBar();
+		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP)
+		{
+			ab.setElevation(0);
+		}
 		if (!Shell.SU.available())
 		{
 			final AlertDialog sualertDialog = new AlertDialog.Builder(MainActivity.this).create();
